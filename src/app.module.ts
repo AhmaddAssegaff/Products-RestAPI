@@ -3,8 +3,11 @@ import { Module, ValidationError, ValidationPipe } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommonModule } from '@core/common/common.module';
-import { TimeoutInterceptor } from '@core/interceptors/timeout.interceptor';
-import { LoggingInterceptor } from '@core/interceptors/logging.interceptor';
+import {
+  TimeoutInterceptor,
+  LoggingInterceptor,
+} from '@core/interceptors/index';
+import { NotFoundExceptionFilter } from '@core/filters/not-found.exception-filter';
 
 @Module({
   imports: [CommonModule],
@@ -14,6 +17,10 @@ import { LoggingInterceptor } from '@core/interceptors/logging.interceptor';
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: NotFoundExceptionFilter,
     },
     {
       provide: APP_PIPE,

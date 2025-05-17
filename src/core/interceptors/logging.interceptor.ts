@@ -5,7 +5,7 @@ import {
   Logger,
   NestInterceptor,
 } from '@nestjs/common';
-import { Observable, catchError, tap } from 'rxjs';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 import { randomUUID } from 'node:crypto';
 import { Request, Response } from 'express';
 
@@ -22,30 +22,29 @@ export class LoggingInterceptor implements NestInterceptor {
     request.headers['x-request-id'] = traceId;
 
     const { method, url } = request;
-
     const start = Date.now();
 
     return next.handle().pipe(
       tap(() => {
         const duration = Date.now() - start;
         const { statusCode } = response;
-
         this.logger.log(
-          `[${traceId}] [${method}] ${url} - ${statusCode} - ${duration}ms`,
+          `[TraceId: ${traceId}] [Method: ${method}] URL: ${url} - StatusCode: ${statusCode} - Duration: ${duration}ms`,
         );
       }),
       catchError((err) => {
         const duration = Date.now() - start;
-        const { statusCode = 500, message, stack } = err;
+        const statusCode = err?.status ?? 500;
+        const message =
+          err?.response?.message ?? err?.message ?? 'Internal Server Error';
+        const stack = err?.stack;
 
-        this.logger.warn(
-          `[${traceId}] [${method}] ${url} - ${statusCode} - ${message} - ${duration}ms`,
+        this.logger.error(
+          `[TraceId: ${traceId}] [Method: ${method}] URL: ${url} - StatusCode: ${statusCode}- Message: ${message} - Duration: ${duration}ms`,
+          stack,
         );
-        if (stack) {
-          this.logger.error(`[${traceId}] Stack: ${stack}`);
-        }
 
-        throw err;
+        return throwError(() => err);
       }),
     );
   }
