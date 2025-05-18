@@ -1,6 +1,5 @@
 import { DynamicModule, ForwardReference, Module, Type } from '@nestjs/common';
-import { RouterModule as NestJsRouterModule } from '@nestjs/core';
-import { ProductsModule } from './products/products.module';
+import { ProductsModule } from '@modules/products/products.module';
 
 @Module({})
 export class RouterModule {

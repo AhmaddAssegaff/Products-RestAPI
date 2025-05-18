@@ -15,12 +15,9 @@
       "@config/*": ["src/config/*"],
       "@core/*": ["src/core/*"],
       "@common/*": ["src/core/common/*"],
-      "@pagination/*": ["src/core/common/pagination/*"],
-      "@shared/*": ["src/shared/*"],
       "@exceptions/*": ["src/core/exceptions/*"],
       "@filters/*": ["src/core/filters/*"],
-      "@exceptionsFilters/*": ["src/core/exceptionsFilters/*"],
-      "@modules": ["src/modules/*"]
+      "@modules/*": ["src/modules/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

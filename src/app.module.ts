@@ -8,8 +8,8 @@ import {
   LoggingInterceptor,
 } from '@core/interceptors/index';
 import { NotFoundExceptionFilter } from '@core/filters/not-found.exception-filter';
-import { BadRequestExceptionFilter } from './core/filters/bad-request.exception-filter';
-import { RouterModule } from './modules/route.modules';
+import { BadRequestExceptionFilter } from '@core/filters/bad-request.exception-filter';
+import { RouterModule } from '@modules/route.modules';
 
 @Module({
   imports: [CommonModule, RouterModule.forRoot()],
