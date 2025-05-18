@@ -11,17 +11,7 @@ export class RouterModule {
       | Promise<DynamicModule>
       | ForwardReference<any>
     )[] = [];
-    imports.push(
-      ProductsModule,
-      // Register the base versioned path prefix "/v1".
-      // Note: Specific paths like "/products" should be handled inside each controller.
-      NestJsRouterModule.register([
-        {
-          path: 'v1', // This acts as a version prefix for all routes inside ProductsModule
-          module: ProductsModule,
-        },
-      ]),
-    );
+    imports.push(ProductsModule);
     return {
       module: RouterModule,
       providers: [],
