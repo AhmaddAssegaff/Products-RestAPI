@@ -8,6 +8,7 @@ import {
   LoggingInterceptor,
 } from '@core/interceptors/index';
 import { NotFoundExceptionFilter } from '@core/filters/not-found.exception-filter';
+import { BadRequestExceptionFilter } from './core/filters/bad-request.exception-filter';
 
 @Module({
   imports: [CommonModule],
@@ -21,6 +22,10 @@ import { NotFoundExceptionFilter } from '@core/filters/not-found.exception-filte
     {
       provide: APP_FILTER,
       useClass: NotFoundExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: BadRequestExceptionFilter,
     },
     {
       provide: APP_PIPE,
