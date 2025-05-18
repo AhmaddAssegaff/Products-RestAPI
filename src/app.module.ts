@@ -9,9 +9,10 @@ import {
 } from '@core/interceptors/index';
 import { NotFoundExceptionFilter } from '@core/filters/not-found.exception-filter';
 import { BadRequestExceptionFilter } from './core/filters/bad-request.exception-filter';
+import { RouterModule } from './modules/route.modules';
 
 @Module({
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule.forRoot()],
   controllers: [AppController],
   providers: [
     AppService,

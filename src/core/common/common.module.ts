@@ -25,6 +25,7 @@ import * as Joi from 'joi';
         // swagger config
         SW_USERNAME: Joi.string().default('nest').required(),
         SW_PASSWORD: Joi.string().default('password').required(),
+        SW_PATH: Joi.string().default('/docs').required(),
       }),
     }),
   ],
