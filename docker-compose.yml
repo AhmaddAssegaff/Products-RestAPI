@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgre
+    ports:
+      - "5444:5432"
+    environment:
+      POSTGRES_DB: productsApidb
+      POSTGRES_USER: productsApidb_user
+      POSTGRES_PASSWORD: productsApidb123
+    volumes:
+      - D:/docker/productsApidb:/var/lib/postgresql/data
