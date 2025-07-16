@@ -36,9 +36,11 @@ export function createDocument(app: INestApplication) {
   const options = builder.build();
 
   const document = SwaggerModule.createDocument(app, options);
+
   SwaggerModule.setup(SWAGGER_PATH, app, document, {
     swaggerOptions: {
       docExpansion: 'none',
+      deepScanRoutes: true,
       showRequestDuration: true,
     },
   });

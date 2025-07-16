@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import helmet from 'helmet';
-import { AppModule } from './app.module';
+import { AppModule } from '@app/app.module';
 import { WinstonModule } from 'nest-winston';
 import { winstonLoggerOptions } from '@config/logger.config';
 import { createDocument } from '@core/docs/swagger';
@@ -15,22 +15,29 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  const PORT = configService.get<string>('app.port') || 3090;
+  const env = configService.get<string>('app.mode');
+  const PORT = configService.get<string>('app.port');
 
-  const defaultVersion = configService.get<string>('app.defaultVersion') || '';
-  const enableVersion = configService.get<string>('app.enableVersion') || true;
+  const defaultVersion = configService.get<string>('app.defaultVersion');
+  const enableVersion = configService.get<string>('app.enableVersion');
 
-  const globalPrefix = configService.get<string>('app.globalPrefix') || '';
-  const versionPrefix = configService.get<string>('app.versionPrefix') || '';
+  const globalPrefix = configService.get<string>('app.globalPrefix');
+  const versionPrefix = configService.get<string>('app.versionPrefix');
 
-  const tz = configService.get<string>('app.tz') || '';
+  const tz = configService.get<string>('app.tz');
   process.env.TZ = tz;
 
   app.enableCors();
   app.use(helmet());
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
+
   app.setGlobalPrefix(globalPrefix);
-  createDocument(app);
 
   if (enableVersion) {
     app.enableVersioning({
@@ -38,9 +45,11 @@ async function bootstrap() {
       defaultVersion,
       prefix: versionPrefix,
     });
+    createDocument(app);
   }
 
   await app.listen(PORT);
+  Logger.log(`Running in ${env} mode`, 'Bootstrap');
   Logger.log(`Application listening on port ${PORT}`, 'Bootstrap');
 }
 bootstrap();

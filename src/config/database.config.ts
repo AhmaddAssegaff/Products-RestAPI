@@ -8,5 +8,6 @@ export default registerAs(
     dbPassword: process.env.DB_PASSWORD,
     dbHost: process.env.DB_HOST,
     dbPort: process.env.DB_PORT,
+    dbUrl: process.env.DATABASE_URL,
   }),
 );

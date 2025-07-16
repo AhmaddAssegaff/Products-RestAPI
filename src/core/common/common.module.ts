@@ -1,7 +1,6 @@
 import Configs from '@config/index';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 
 @Module({
@@ -10,10 +9,18 @@ import * as Joi from 'joi';
       load: Configs,
       isGlobal: true,
       cache: true,
-      envFilePath: ['.env'],
+      envFilePath: [
+        '.env.local',
+        `.env.${process.env.NODE_ENV}.local`,
+        `.env.${process.env.NODE_ENV}`,
+        '.env',
+      ],
       expandVariables: true,
       validationSchema: Joi.object({
         APP_PORT: Joi.number().required(),
+        NODE_ENV: Joi.string()
+          .valid('development', 'test', 'staging', 'production')
+          .required(),
         API_PREFIX: Joi.string().required(),
         ENABLE_VERSION: Joi.boolean().required(),
         VERSION_PREFIX: Joi.string().required(),
@@ -25,26 +32,16 @@ import * as Joi from 'joi';
         DB_PASSWORD: Joi.string().required(),
         DB_HOST: Joi.string().hostname().required(),
         DB_PORT: Joi.number().port().required(),
+        DATABASE_URL: Joi.string().required(),
 
         SW_USERNAME: Joi.string().default('nest').required(),
         SW_PASSWORD: Joi.string().default('password').required(),
         SW_PATH: Joi.string().default('/docs').required(),
       }),
-    }),
-
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('databse.DB_HOST'),
-        port: configService.get<number>('database.DB_PORT'),
-        username: configService.get<string>('database.DB_USER'),
-        password: configService.get<string>('database.DB_PASS'),
-        database: configService.get<string>('database.DB_NAME'),
-        autoLoadEntities: true,
-        synchronize: true, // Hanya untuk dev
-      }),
+      validationOptions: {
+        abortEarly: true,
+        allowUnknown: true,
+      },
     }),
   ],
 })

@@ -11,8 +11,8 @@ export const SWAGGER_CONFIG: SwaggerConfig = {
 export default registerAs(
   'swagger',
   (): Record<string, any> => ({
-    userName: process.env.SW_USERNAME || '',
-    password: process.env.SW_PASSWORD || '',
-    path: process.env.SW_PATH || '',
+    userName: process.env.SW_USERNAME,
+    password: process.env.SW_PASSWORD,
+    path: process.env.SW_PATH,
   }),
 );

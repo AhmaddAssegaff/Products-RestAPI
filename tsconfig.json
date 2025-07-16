@@ -17,7 +17,10 @@
       "@common/*": ["src/core/common/*"],
       "@exceptions/*": ["src/core/exceptions/*"],
       "@filters/*": ["src/core/filters/*"],
-      "@modules/*": ["src/modules/*"]
+      "@modules/*": ["src/modules/*"],
+      "@env/*": ["src/env/*"],
+      "@database/*": ["src/modules/database/*"],
+      "@products/*": ["src/modules/products/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

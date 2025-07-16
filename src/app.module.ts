@@ -1,14 +1,18 @@
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { Module, ValidationError, ValidationPipe } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from '@app/app.controller';
+import { AppService } from '@app/app.service';
 import { CommonModule } from '@core/common/common.module';
 import {
   TimeoutInterceptor,
   LoggingInterceptor,
+  ResponseInterceptor,
 } from '@core/interceptors/index';
-import { NotFoundExceptionFilter } from '@core/filters/not-found.exception-filter';
-import { BadRequestExceptionFilter } from '@core/filters/bad-request.exception-filter';
+import {
+  AllExceptionsFilter,
+  BadRequestExceptionFilter,
+  NotFoundExceptionFilter,
+} from '@app/core/filters';
 import { RouterModule } from '@modules/route.modules';
 
 @Module({
@@ -17,8 +21,8 @@ import { RouterModule } from '@modules/route.modules';
   providers: [
     AppService,
     {
-      provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
     },
     {
       provide: APP_FILTER,
@@ -37,6 +41,14 @@ import { RouterModule } from '@modules/route.modules';
             return errors[0];
           },
         }),
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
     },
     {
       provide: APP_INTERCEPTOR,
