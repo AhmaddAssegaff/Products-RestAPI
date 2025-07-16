@@ -7,21 +7,30 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:dev": "cross-env NODE_ENV=development nest start --watch",
     "start:debug": "cross-env NODE_ENV=development nest start --debug --watch",
     "start:test": "cross-env NODE_ENV=test nest start --debug --watch",
     "start:staging": "cross-env NODE_ENV=staging nest start --watch",
     "start:prod": "cross-env NODE_ENV=production node dist/main",
-    "migrate": "node-pg-migrate up -c node-pg-migrate.config.js",
-    "migrate:down": "node-pg-migrate down -c node-pg-migrate.config.js",
     "migrate:create": "node-pg-migrate create -m migrations -c node-pg-migrate.config.js",
+    "migrate:dev:up": "cross-env NODE_ENV=development node-pg-migrate up -c node-pg-migrate.config.js",
+    "migrate:dev:down": "cross-env NODE_ENV=development node-pg-migrate down -c node-pg-migrate.config.js",
+    "migrate:staging:up": "cross-env NODE_ENV=staging node-pg-migrate up -c node-pg-migrate.config.js",
+    "migrate:staging:down": "cross-env NODE_ENV=staging node-pg-migrate down -c node-pg-migrate.config.js",
+    "migrate:prod:up": "cross-env NODE_ENV=production node-pg-migrate up -c node-pg-migrate.config.js",
+    "migrate:prod:down": "cross-env NODE_ENV=production node-pg-migrate down -c node-pg-migrate.config.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -63,6 +72,7 @@
     "eslint-plugin-prettier": "^5.0.0",
     "husky": "^9.1.7",
     "jest": "^29.5.0",
+    "lint-staged": "^16.1.2",
     "node-pg-migrate": "^8.0.2",
     "prettier": "^3.0.0",
     "source-map-support": "^0.5.21",
