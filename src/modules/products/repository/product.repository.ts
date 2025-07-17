@@ -9,6 +9,7 @@ const SQL = {
   SELECT_PRODUCT: 'SELECT * FROM products',
   SELECT_ONE_PRODUCT: 'SELECT * FROM products WHERE id = $1',
   UPDATE_ONE_PRODUCT: 'UPDATE products SET name = $1, price = $2 WHERE id = $3 RETURNING *',
+  DELETE_ONE_PRODUCT: 'DELETE FROM products WHERE id = $1 RETURNING *',
 };
 
 @Injectable()
@@ -39,5 +40,11 @@ export class ProductsRepository {
     const result: QueryResult<InterfaceProduct> = await this.pool.query(SQL.UPDATE_ONE_PRODUCT, [name, price, id]);
 
     return result.rows[0];
+  }
+
+  async delete(id: string) {
+    const result: QueryResult<InterfaceProduct> = await this.pool.query(SQL.DELETE_ONE_PRODUCT, [id]);
+
+    return result.rows[0] || null;
   }
 }
