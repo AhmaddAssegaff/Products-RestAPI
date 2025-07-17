@@ -1,11 +1,12 @@
-version: "3.8"
+version: '3.8'
 
 services:
   postgres:
     image: postgres:latest
     container_name: postgre
+    restart: always
     ports:
-      - "5444:5432"
+      - '5444:5432'
     environment:
       POSTGRES_DB: productsApidb
       POSTGRES_USER: productsApidb_user

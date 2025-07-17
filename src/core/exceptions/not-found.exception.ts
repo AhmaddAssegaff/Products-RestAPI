@@ -66,9 +66,7 @@ export class NotFoundException extends HttpException {
     this.path = path;
   };
 
-  generateHttpResponseBody = (
-    message?: string,
-  ): IHttpNotFoundExceptionResponse => {
+  generateHttpResponseBody = (message?: string): IHttpNotFoundExceptionResponse => {
     return {
       _metadata: {
         message: message || this.message,

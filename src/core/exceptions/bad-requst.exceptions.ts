@@ -66,9 +66,7 @@ export class BadRequestException extends HttpException {
     this.path = path;
   };
 
-  generateHttpResponseBody = (
-    message?: string,
-  ): IHttpBadRequestExceptionResponse => {
+  generateHttpResponseBody = (message?: string): IHttpBadRequestExceptionResponse => {
     return {
       _metadata: {
         message: message || this.message,

@@ -25,11 +25,7 @@ import { Pool } from 'pg';
             'DatabaseModule',
           );
         } catch (err) {
-          Logger.error(
-            'PostgreSQL connection failed',
-            err.stack,
-            'DatabaseModule',
-          );
+          Logger.error('PostgreSQL connection failed', err.stack, 'DatabaseModule');
           process.exit(1);
         }
 

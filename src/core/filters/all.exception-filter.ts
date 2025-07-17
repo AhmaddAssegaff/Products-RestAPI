@@ -45,8 +45,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       responseBody = {
         _metadata: {
           message: 'Unknown error occurred',
-          description:
-            (exception as Error)?.message || 'Unexpected error occurred',
+          description: (exception as Error)?.message || 'Unexpected error occurred',
           timestamp: new Date().toISOString(),
           code,
           traceId,

@@ -23,8 +23,7 @@ export class TimeoutInterceptor implements NestInterceptor {
               new GatewayTimeoutException({
                 message: 'Gateway Timeout',
                 cause: new Error('Gateway Timeout'),
-                code: ExceptionConstants.InternalServerErrorCodes
-                  .GATE_WAY_TIME_OUT,
+                code: ExceptionConstants.InternalServerErrorCodes.GATE_WAY_TIME_OUT,
                 description: 'Gateway Timeout',
               }),
           );

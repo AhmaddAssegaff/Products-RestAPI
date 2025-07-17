@@ -18,9 +18,7 @@ import * as Joi from 'joi';
       expandVariables: true,
       validationSchema: Joi.object({
         APP_PORT: Joi.number().required(),
-        NODE_ENV: Joi.string()
-          .valid('development', 'test', 'staging', 'production')
-          .required(),
+        NODE_ENV: Joi.string().valid('development', 'test', 'staging', 'production').required(),
         API_PREFIX: Joi.string().required(),
         ENABLE_VERSION: Joi.boolean().required(),
         VERSION_PREFIX: Joi.string().required(),

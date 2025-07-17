@@ -9,8 +9,7 @@ export function createDocument(app: INestApplication) {
 
   const username = configService.get<string>('swagger.username') ?? 'admin';
   const password = configService.get<string>('swagger.password') ?? 'admin';
-  const SWAGGER_PATH =
-    configService.get<string>('swagger.path') || 'documentation';
+  const SWAGGER_PATH = configService.get<string>('swagger.path') || 'documentation';
   const appMode = configService.get<string>('app.mode');
 
   // Basic Auth for Swagger non-dev mode
