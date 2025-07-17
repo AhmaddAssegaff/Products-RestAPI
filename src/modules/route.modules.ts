@@ -5,8 +5,7 @@ import { DatabaseModule } from '@modules/database/database.module';
 @Module({})
 export class RouterModule {
   static forRoot(): DynamicModule {
-    const imports: (DynamicModule | Type<any> | Promise<DynamicModule> | ForwardReference<any>)[] =
-      [];
+    const imports: (DynamicModule | Type<any> | Promise<DynamicModule> | ForwardReference<any>)[] = [];
     imports.push(ProductsModule, DatabaseModule);
     return {
       module: RouterModule,

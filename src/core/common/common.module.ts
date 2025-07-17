@@ -9,12 +9,7 @@ import * as Joi from 'joi';
       load: Configs,
       isGlobal: true,
       cache: true,
-      envFilePath: [
-        '.env.local',
-        `.env.${process.env.NODE_ENV}.local`,
-        `.env.${process.env.NODE_ENV}`,
-        '.env',
-      ],
+      envFilePath: ['.env.local', `.env.${process.env.NODE_ENV}.local`, `.env.${process.env.NODE_ENV}`, '.env'],
       expandVariables: true,
       validationSchema: Joi.object({
         APP_PORT: Joi.number().required(),
