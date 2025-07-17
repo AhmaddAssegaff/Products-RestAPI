@@ -17,14 +17,22 @@ export class ProductsService {
 
   async findOne(id: string) {
     const product = await this.productsRepository.findOne(id);
+
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
+
     return product;
   }
 
-  update(id: string, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    const product = await this.productsRepository.update(id, updateProductDto);
+
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
+
+    return product;
   }
 
   remove(id: string) {
