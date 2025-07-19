@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS cart_items (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  cart_id UUID NOT NULL REFERENCES carts(id) ON DELETE CASCADE,
+  product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  quantity INTEGER NOT NULL DEFAULT 1,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
