@@ -6,9 +6,16 @@ import { CommonModule } from '@core/common/common.module';
 import { TimeoutInterceptor, LoggingInterceptor, ResponseInterceptor } from '@core/interceptors/index';
 import { AllExceptionsFilter, BadRequestExceptionFilter, NotFoundExceptionFilter } from '@app/core/filters';
 import { RouterModule } from '@modules/route.modules';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
-  imports: [CommonModule, RouterModule.forRoot()],
+  imports: [
+    CommonModule,
+    PrometheusModule.register({
+      path: '/metrics',
+    }),
+    RouterModule.forRoot(),
+  ],
   controllers: [AppController],
   providers: [
     AppService,

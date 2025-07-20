@@ -5,11 +5,69 @@ services:
     image: postgres:latest
     container_name: POSTGRES_DB_MINI_ECOMMERCE
     restart: always
-    ports:
-      - '5444:5432'
     environment:
-      POSTGRES_DB: { DB_NAME }
-      POSTGRES_USER: { DB_USER }
-      POSTGRES_PASSWORD: { DB_PASSWORD }
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - '${DB_PORT}:5432'
     volumes:
-      - D:/docker/productsApidb:/var/lib/postgresql/data
+      - D:/docker/mini_ecommarce_db:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: MINI_ECOMMERCE_BACKEND
+    depends_on:
+      - postgres
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - API_PREFIX=${API_PREFIX}
+      - ENABLE_VERSION=${ENABLE_VERSION}
+      - VERSION_PREFIX=${VERSION_PREFIX}
+      - DEFAULT_VERSION=${DEFAULT_VERSION}
+      - SW_USERNAME=${SW_USERNAME}
+      - SW_PASSWORD=${SW_PASSWORD}
+      - SW_PATH=${SW_PATH}
+      - TZ=${TZ}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+    ports:
+      - '${APP_PORT}:3000'
+    networks:
+      - backend
+
+  prometheus:
+    image: prom/prometheus
+    container_name: PROMETHEUS
+    restart: always
+    ports:
+      - '${PROMETHEUS_PORT}:9090'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - backend
+
+  grafana:
+    image: grafana/grafana
+    container_name: GRAFANA
+    restart: always
+    ports:
+      - '${GRAFANA_PORT}:3000'
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+    volumes:
+      - D:/docker/mini_ecommarce_grafana:/var/lib/grafana
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

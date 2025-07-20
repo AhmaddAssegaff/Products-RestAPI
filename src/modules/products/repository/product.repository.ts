@@ -1,7 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from '@products/dto/create-product.dto';
 import { InterfaceProduct } from '@products/interface/products.interface';
-import { type QueryResult, Pool } from 'pg';
+import { QueryResult } from 'pg';
+import { DatabaseService } from '@modules/database/database.service';
 import { UpdateProductDto } from '../dto/update-product.dto';
 
 const SQL = {
@@ -14,37 +15,37 @@ const SQL = {
 
 @Injectable()
 export class ProductsRepository {
-  constructor(@Inject('PG_POOL') private readonly pool: Pool) {}
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async create(createProductDto: CreateProductDto): Promise<InterfaceProduct> {
     const { name, price } = createProductDto;
-
-    const result: QueryResult<InterfaceProduct> = await this.pool.query(SQL.INSERT_PRODUCT, [name, price]);
-
+    const pool = this.databaseService.getPool();
+    const result: QueryResult<InterfaceProduct> = await pool.query(SQL.INSERT_PRODUCT, [name, price]);
     return result.rows[0];
   }
 
   async findAll(): Promise<InterfaceProduct[]> {
-    const result: QueryResult<InterfaceProduct> = await this.pool.query(SQL.SELECT_PRODUCT);
+    const pool = this.databaseService.getPool();
+    const result: QueryResult<InterfaceProduct> = await pool.query(SQL.SELECT_PRODUCT);
     return result.rows;
   }
 
   async findOne(id: string): Promise<InterfaceProduct> {
-    const result: QueryResult<InterfaceProduct> = await this.pool.query(SQL.SELECT_ONE_PRODUCT, [id]);
+    const pool = this.databaseService.getPool();
+    const result: QueryResult<InterfaceProduct> = await pool.query(SQL.SELECT_ONE_PRODUCT, [id]);
     return result.rows[0];
   }
 
   async update(id: string, updateProductDto: UpdateProductDto): Promise<InterfaceProduct> {
     const { name, price } = updateProductDto;
-
-    const result: QueryResult<InterfaceProduct> = await this.pool.query(SQL.UPDATE_ONE_PRODUCT, [name, price, id]);
-
+    const pool = this.databaseService.getPool();
+    const result: QueryResult<InterfaceProduct> = await pool.query(SQL.UPDATE_ONE_PRODUCT, [name, price, id]);
     return result.rows[0];
   }
 
   async delete(id: string) {
-    const result: QueryResult<InterfaceProduct> = await this.pool.query(SQL.DELETE_ONE_PRODUCT, [id]);
-
+    const pool = this.databaseService.getPool();
+    const result: QueryResult<InterfaceProduct> = await pool.query(SQL.DELETE_ONE_PRODUCT, [id]);
     return result.rows[0] || null;
   }
 }
