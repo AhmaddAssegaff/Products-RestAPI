@@ -8,7 +8,12 @@ fi
 MIGRATIONS_DIR="./migrations"
 DATE=$(date +"%Y_%m_%d")
 NAME=$1
-FOLDER_NAME="table_${NAME}"
+
+# Hitung jumlah folder yang sudah ada
+COUNT=$(find "$MIGRATIONS_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l)
+NEXT_NUMBER=$(printf "%02d" $((COUNT + 1)))
+
+FOLDER_NAME="${NEXT_NUMBER}_table_${NAME}"
 
 mkdir -p "${MIGRATIONS_DIR}/${FOLDER_NAME}"
 
@@ -27,4 +32,4 @@ DROP TABLE IF EXISTS ${NAME};
 
 EOL
 
-echo "Migration created with template at ${MIGRATIONS_DIR}/${FOLDER_NAME}/"
+echo "✅ Migration created at ${MIGRATIONS_DIR}/${FOLDER_NAME}"

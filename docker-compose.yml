@@ -25,6 +25,7 @@ services:
       - postgres
     environment:
       - NODE_ENV=${NODE_ENV}
+      - APP_PORT=${APP_PORT}
       - API_PREFIX=${API_PREFIX}
       - ENABLE_VERSION=${ENABLE_VERSION}
       - VERSION_PREFIX=${VERSION_PREFIX}

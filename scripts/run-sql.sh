@@ -20,4 +20,4 @@ fi
 
 echo "Running migration with env: $ENV_FILE"
 
-dotenv -e "$ENV_FILE" -- bash -c "docker exec -i postgre psql -U \$DB_USER -d \$DB_NAME -f - < \"$SQL_FILE\""
+dotenv -e "$ENV_FILE" -- bash -c "docker exec -i POSTGRES_DB_MINI_ECOMMERCE psql -U \$DB_USER -d \$DB_NAME -f - < \"$SQL_FILE\""

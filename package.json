@@ -14,6 +14,7 @@
     "start:test": "cross-env NODE_ENV=test nest start --debug --watch",
     "start:staging": "cross-env NODE_ENV=staging nest start --watch",
     "start:prod": "cross-env NODE_ENV=production node dist/main",
+    "migrate:push": "bash ./scripts/run-all-migrations.sh",
     "migrate:create": "bash ./scripts/create-table.sh",
     "migrate:dev": "cross-env NODE_ENV=development bash ./scripts/run-sql.sh",
     "migrate:staging": "cross-env NODE_ENV=staging bash ./scripts/run-sql.sh",
