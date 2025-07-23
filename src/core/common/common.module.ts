@@ -20,6 +20,20 @@ import * as Joi from 'joi';
         DEFAULT_VERSION: Joi.string().required(),
         TZ: Joi.string().required(),
 
+        AUTH_JWT_ACCESS_TOKEN_EXPIRED: Joi.string(),
+        AUTH_JWT_ACCESS_TOKEN_SECRET_KEY: Joi.string(),
+
+        AUTH_JWT_REFRESH_TOKEN_EXPIRED: Joi.string(),
+        AUTH_JWT_REFRESH_TOKEN_SECRET_KEY: Joi.string(),
+
+        AUTH_JWT_PAYLOAD_ENCRYPT: Joi.boolean(),
+
+        AUTH_JWT_PAYLOAD_ACCESS_TOKEN_ENCRYPT_KEY: Joi.string(),
+        AUTH_JWT_PAYLOAD_ACCESS_TOKEN_ENCRYPT_IV: Joi.string(),
+
+        AUTH_JWT_PAYLOAD_REFRESH_TOKEN_ENCRYPT_KEY: Joi.string(),
+        AUTH_JWT_PAYLOAD_REFRESH_TOKEN_ENCRYPT_IV: Joi.string(),
+
         DB_NAME: Joi.string().required(),
         DB_USER: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),

@@ -20,7 +20,9 @@
       "@modules/*": ["src/modules/*"],
       "@env/*": ["src/env/*"],
       "@database/*": ["src/modules/database/*"],
-      "@products/*": ["src/modules/products/*"]
+      "@products/*": ["src/modules/products/*"],
+      "@users/*": ["src/modules/users/*"],
+      "@auth/*": ["src/modules/auth/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

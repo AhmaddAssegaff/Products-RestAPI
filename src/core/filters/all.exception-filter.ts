@@ -24,10 +24,18 @@ export class AllExceptionsFilter implements ExceptionFilter {
       httpStatus = exception.getStatus();
       const exceptionResponse = exception.getResponse();
 
+      const message =
+        typeof exceptionResponse === 'object' && exceptionResponse !== null ? ((exceptionResponse as any).message ?? exception.message) : exception.message;
+
+      const description =
+        typeof exceptionResponse === 'object' && exceptionResponse !== null
+          ? ((exceptionResponse as any).error ?? HttpStatus[httpStatus])
+          : HttpStatus[httpStatus];
+
       responseBody = {
         _metadata: {
-          message: 'Unknown error occurred',
-          description: (exceptionResponse as any)?.error || exception.message,
+          message: Array.isArray(message) ? message[0] : message,
+          description,
           timestamp: new Date().toISOString(),
           code,
           traceId,
@@ -37,8 +45,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
     } else {
       responseBody = {
         _metadata: {
-          message: 'Unknown error occurred',
-          description: (exception as Error)?.message || 'Unexpected error occurred',
+          message: (exception as Error)?.message || 'Unexpected error occurred',
+          description: 'Internal Server Error',
           timestamp: new Date().toISOString(),
           code,
           traceId,
