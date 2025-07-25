@@ -22,7 +22,14 @@ export class LoggingInterceptor implements NestInterceptor {
       tap(() => {
         const duration = Date.now() - start;
         const { statusCode } = response;
-        this.logger.log(`[TraceId: ${traceId}] [Method: ${method}] URL: ${url} - StatusCode: ${statusCode} - Duration: ${duration}ms`);
+        this.logger.log({
+          context: 'HTTP',
+          method,
+          url,
+          statusCode,
+          duration,
+          traceId,
+        });
       }),
       catchError((err) => {
         const duration = Date.now() - start;
@@ -30,10 +37,16 @@ export class LoggingInterceptor implements NestInterceptor {
         const message = err?.response?.message ?? err?.message ?? 'Internal Server Error';
         const stack = err?.stack;
 
-        this.logger.error(
-          `[TraceId: ${traceId}] [Method: ${method}] URL: ${url} - StatusCode: ${statusCode}- Message: ${message} - Duration: ${duration}ms`,
+        this.logger.error({
+          context: 'HTTP',
+          message,
+          method,
+          url,
+          statusCode,
+          duration,
+          traceId,
           stack,
-        );
+        });
 
         return throwError(() => err);
       }),

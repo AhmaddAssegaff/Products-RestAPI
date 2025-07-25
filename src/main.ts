@@ -6,12 +6,18 @@ import { WinstonModule } from 'nest-winston';
 import { winstonLoggerOptions } from '@config/logger.config';
 import { createDocument } from '@core/docs/swagger';
 import { ConfigService } from '@nestjs/config';
+import { collectDefaultMetrics, Registry } from 'prom-client';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
     logger: WinstonModule.createLogger(winstonLoggerOptions),
   });
+
+  const register = new Registry();
+  collectDefaultMetrics({ register });
+
+  app.enableShutdownHooks();
 
   const configService = app.get(ConfigService);
 
