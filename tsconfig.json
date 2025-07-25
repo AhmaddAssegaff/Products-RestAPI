@@ -22,7 +22,8 @@
       "@database/*": ["src/modules/database/*"],
       "@products/*": ["src/modules/products/*"],
       "@users/*": ["src/modules/users/*"],
-      "@auth/*": ["src/modules/auth/*"]
+      "@auth/*": ["src/modules/auth/*"],
+      "@jwt/*": ["src/modules/jwt/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

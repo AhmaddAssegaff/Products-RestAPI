@@ -4,43 +4,21 @@ import { LoginDto } from '@auth/dto/login-auth.dto';
 import { UsersService } from '@users/users.service';
 import { user_role } from '@users/interface/users.interface';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { JwtPayload } from './interface/auth.interface';
-import { decryptPayload, encryptPayload } from '@core/utils/jwt-encryption.util';
+import { JwtPayload } from '../jwt/jwt.interface';
+import { JwtTokenService } from '@jwt/jwt-token.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UsersService,
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly jwtTokenService: JwtTokenService,
   ) {}
 
-  async generateTokens(payload: JwtPayload) {
-    const encrypt = this.configService.get('AUTH_JWT_PAYLOAD_ENCRYPT') === 'true';
-
-    const rawPayload = encrypt
-      ? { data: encryptPayload(payload, this.configService.get('AUTH_JWT_ENCRYPTION_KEY'), this.configService.get('AUTH_JWT_ENCRYPTION_IV')) }
-      : payload;
-
-    const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(rawPayload, {
-        secret: this.configService.get('AUTH_JWT_ACCESS_TOKEN_SECRET'),
-        expiresIn: this.configService.get('AUTH_JWT_ACCESS_TOKEN_EXPIRES_IN'),
-      }),
-      this.jwtService.signAsync(rawPayload, {
-        secret: this.configService.get('AUTH_JWT_REFRESH_TOKEN_SECRET'),
-        expiresIn: this.configService.get('AUTH_JWT_REFRESH_TOKEN_EXPIRES_IN'),
-      }),
-    ]);
-
-    return { accessToken, refreshToken };
-  }
-
   async createUser(createAccountDto: CreateAccountDto) {
-    await this.userService.findOneUserByUsername(createAccountDto.username);
-    const hashedPassword = await bcrypt.hash(createAccountDto.password, 10);
+    const { username, password } = createAccountDto;
+
+    await this.userService.findOneUserByUsername(username);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await this.userService.createUser({
       username: createAccountDto.username,
@@ -54,7 +32,7 @@ export class AuthService {
       role: user.role,
     };
 
-    const tokens = await this.generateTokens(payload);
+    const tokens = await this.jwtTokenService.generateTokens(payload);
 
     return {
       user: {
