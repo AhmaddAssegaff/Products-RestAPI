@@ -7,6 +7,7 @@ import { winstonLoggerOptions } from '@config/logger.config';
 import { createDocument } from '@core/docs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { collectDefaultMetrics, Registry } from 'prom-client';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -34,6 +35,7 @@ async function bootstrap() {
   process.env.TZ = tz;
 
   app.enableCors();
+  app.use(cookieParser());
   app.use(helmet());
   app.useGlobalPipes(
     new ValidationPipe({

@@ -1,5 +1,10 @@
 import { user_role } from '@users/interface/users.interface';
 
+export interface Token {
+  refreshToken: string;
+  accessToken: string;
+}
+
 export interface JwtPayload {
   sub: string;
   username: string;

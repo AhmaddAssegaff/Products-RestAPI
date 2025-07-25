@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateAccountDto } from '@auth/dto/create-account.dto';
 import { LoginDto } from '@auth/dto/login-auth.dto';
 import { UsersService } from '@users/users.service';
 import { user_role } from '@users/interface/users.interface';
-import * as bcrypt from 'bcrypt';
-import { JwtPayload } from '../jwt/jwt.interface';
+import { JwtPayload } from '@jwt/jwt.interface';
 import { JwtTokenService } from '@jwt/jwt-token.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +17,12 @@ export class AuthService {
   async createUser(createAccountDto: CreateAccountDto) {
     const { username, password } = createAccountDto;
 
-    await this.userService.findOneUserByUsername(username);
+    const existingUser = await this.userService.findOneUserByUsername(username);
+
+    if (existingUser) {
+      throw new ConflictException('Username already exists');
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await this.userService.createUser({
@@ -44,11 +49,57 @@ export class AuthService {
     };
   }
 
-  async UserLogin(LoginDto: LoginDto) {
-    return await 'login';
+  async UserLogin(loginDto: LoginDto) {
+    const { password, username } = loginDto;
+
+    const user = await this.userService.findOneUserByUsername(username);
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+    if (!user || !isPasswordMatch) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload: JwtPayload = {
+      sub: user.id,
+      username: user.username,
+      role: user.role,
+    };
+
+    const tokens = await this.jwtTokenService.generateTokens(payload);
+
+    return {
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+      },
+      tokens,
+    };
   }
 
-  async createAccessToken() {
-    return await 'new Access Token';
+  async refreshAccessToken(refreshToken: string) {
+    const payload = await this.jwtTokenService.verifyRefreshToken(refreshToken);
+    const user = await this.userService.findOneUserByUsername(payload.username);
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const newPayload: JwtPayload = {
+      sub: user.id,
+      username: user.username,
+      role: user.role,
+    };
+
+    const tokens = await this.jwtTokenService.generateTokens(newPayload);
+
+    return {
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+      },
+      tokens,
+    };
   }
 }

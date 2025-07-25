@@ -2,6 +2,7 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from '@auth/auth.service';
 import { CreateAccountDto } from '@auth/dto/create-account.dto';
 import { LoginDto } from '@auth/dto/login-auth.dto';
+import { Cookies } from '@app/core/decorators/cookies.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -18,7 +19,7 @@ export class AuthController {
   }
 
   @Post('refresh-token')
-  async createAccessToken() {
-    return await this.authService.createAccessToken();
+  async refresh(@Cookies('refreshToken') refreshToken: string) {
+    return this.authService.refreshAccessToken(refreshToken);
   }
 }
