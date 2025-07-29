@@ -5,16 +5,16 @@ export interface Token {
   accessToken: string;
 }
 
+export interface JwtPayloadEncrypted {
+  data: string;
+  iat?: number;
+  exp?: number;
+}
+
 export interface JwtPayload {
   sub: string;
   username: string;
   role: userRole;
   iat?: number;
   exp?: number;
-}
-
-export interface JwtValidatedPayload {
-  id: string;
-  username: string;
-  role: userRole;
 }
