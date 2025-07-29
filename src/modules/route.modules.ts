@@ -3,12 +3,13 @@ import { DatabaseModule } from '@modules/database/database.module';
 import { ProductsModule } from '@modules/products/products.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { UsersModule } from '@modules/users/users.module';
+import { JwtTokenModule } from '@modules/jwt/jwt-token.module';
 
 @Module({})
 export class RouterModule {
   static forRoot(): DynamicModule {
     const imports: (DynamicModule | Type<any> | Promise<DynamicModule> | ForwardReference<any>)[] = [];
-    imports.push(DatabaseModule, AuthModule, UsersModule, ProductsModule);
+    imports.push(DatabaseModule, AuthModule, JwtTokenModule, UsersModule, ProductsModule);
     return {
       module: RouterModule,
       providers: [],

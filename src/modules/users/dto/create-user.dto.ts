@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { InterfaceCreateUsersInput, user_role } from '@users/interface/users.interface';
+import { InterfaceCreateUsersInput, userRole } from '@users/interface/users.interface';
 import { IsEnum, IsString } from 'class-validator';
 
 export class CreateUserDto implements InterfaceCreateUsersInput {
@@ -13,6 +13,6 @@ export class CreateUserDto implements InterfaceCreateUsersInput {
 
   @ApiProperty({ example: 'user', description: 'role' })
   @IsString()
-  @IsEnum(user_role)
-  role: user_role;
+  @IsEnum(userRole)
+  role: userRole;
 }

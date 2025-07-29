@@ -4,7 +4,15 @@ import { AppController } from '@app/app.controller';
 import { AppService } from '@app/app.service';
 import { CommonModule } from '@core/common/common.module';
 import { TimeoutInterceptor, LoggingInterceptor, ResponseInterceptor } from '@core/interceptors/index';
-import { AllExceptionsFilter, BadRequestExceptionFilter, NotFoundExceptionFilter } from '@app/core/filters';
+import {
+  AllExceptionsFilter,
+  BadRequestExceptionFilter,
+  NotFoundExceptionFilter,
+  ValidationExceptionFilter,
+  ForbiddenExceptionFilter,
+  UnauthorizedExceptionFilter,
+} from '@app/core/filters';
+
 import { RouterModule } from '@modules/route.modules';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
@@ -30,6 +38,18 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
     {
       provide: APP_FILTER,
       useClass: BadRequestExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: UnauthorizedExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: ForbiddenExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: ValidationExceptionFilter,
     },
     {
       provide: APP_PIPE,

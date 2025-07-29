@@ -1,4 +1,4 @@
-import { user_role } from '@users/interface/users.interface';
+import { userRole } from '@users/interface/users.interface';
 
 export interface Token {
   refreshToken: string;
@@ -8,7 +8,7 @@ export interface Token {
 export interface JwtPayload {
   sub: string;
   username: string;
-  role: user_role;
+  role: userRole;
   iat?: number;
   exp?: number;
 }
@@ -16,5 +16,5 @@ export interface JwtPayload {
 export interface JwtValidatedPayload {
   id: string;
   username: string;
-  role: user_role;
+  role: userRole;
 }
