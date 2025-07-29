@@ -16,12 +16,12 @@ import { RolesGuard } from '@app/core/guard/roles.guard';
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
+  @Roles(userRole.admin)
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
   }
 
-  @Roles(userRole.user)
   @Get()
   findAll() {
     return this.productsService.findAll();
@@ -32,11 +32,13 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
+  @Roles(userRole.admin)
   @Patch(':id')
   update(@Param('id', ParseUUIDPipe) id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productsService.update(id, updateProductDto);
   }
 
+  @Roles(userRole.admin)
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.productsService.remove(id);
