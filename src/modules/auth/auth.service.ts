@@ -2,7 +2,7 @@ import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/co
 import { CreateAccountDto } from '@auth/dto/create-account.dto';
 import { LoginDto } from '@auth/dto/login-auth.dto';
 import { UsersService } from '@users/users.service';
-import { userRole } from '@users/interface/users.interface';
+import { userRole } from '@core/constants/user.constants';
 import { JwtPayload } from '@jwt/jwt.interface';
 import { JwtTokenService } from '@jwt/jwt-token.service';
 import * as bcrypt from 'bcrypt';

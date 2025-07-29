@@ -1,4 +1,4 @@
-import { userRole } from '@users/interface/users.interface';
+import { userRole } from '@core/constants/user.constants';
 
 export interface Token {
   refreshToken: string;

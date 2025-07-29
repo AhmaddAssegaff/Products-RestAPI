@@ -1,7 +1,4 @@
-export enum userRole {
-  user = 'user',
-  admin = 'admin',
-}
+import { userRole } from '@core/constants/user.constants';
 
 export interface InterfaceUsers {
   id: string;
