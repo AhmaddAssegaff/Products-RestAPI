@@ -12,6 +12,7 @@ import {
   ForbiddenExceptionFilter,
   UnauthorizedExceptionFilter,
 } from '@app/core/filters';
+import { customUnauthorizedFilter } from '@core/filters/custom-unauthorized.filter';
 
 import { RouterModule } from '@modules/route.modules';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
@@ -41,7 +42,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
     },
     {
       provide: APP_FILTER,
-      useClass: UnauthorizedExceptionFilter,
+      useClass: customUnauthorizedFilter,
     },
     {
       provide: APP_FILTER,

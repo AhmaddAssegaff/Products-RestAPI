@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateAccountDto } from '@auth/dto/create-account.dto';
 import { LoginDto } from '@auth/dto/login-auth.dto';
 import { UsersService } from '@users/users.service';
@@ -6,6 +6,8 @@ import { userRole } from '@core/constants/user.constants';
 import { JwtPayload } from '@jwt/jwt.interface';
 import { JwtTokenService } from '@jwt/jwt-token.service';
 import * as bcrypt from 'bcrypt';
+import { ExceptionConstants } from '@app/core/exceptions/constants';
+import { UnauthorizedException } from '@core/exceptions/unauthorized.exception';
 
 @Injectable()
 export class AuthService {
@@ -53,10 +55,21 @@ export class AuthService {
     const { password, username } = loginDto;
 
     const user = await this.userService.findOneUserByUsername(username);
+
+    if (!user) {
+      throw new UnauthorizedException({
+        code: ExceptionConstants.UnauthorizedCodes.INVALID_CREDENTIALS,
+        message: 'Invalid credentials test',
+      });
+    }
+
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
-    if (!user || !isPasswordMatch) {
-      throw new UnauthorizedException('Invalid credentials');
+    if (!isPasswordMatch) {
+      throw new UnauthorizedException({
+        code: ExceptionConstants.UnauthorizedCodes.INVALID_CREDENTIALS,
+        message: 'Invalid credentials',
+      });
     }
 
     const payload: JwtPayload = {
@@ -82,7 +95,10 @@ export class AuthService {
     const user = await this.userService.findOneUserByUsername(payload.username);
 
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException({
+        code: ExceptionConstants.UnauthorizedCodes.AUTHENTICATION_FAILED,
+        message: 'user not found',
+      });
     }
 
     const newPayload: JwtPayload = {
