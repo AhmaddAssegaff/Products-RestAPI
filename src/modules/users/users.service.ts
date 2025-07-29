@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from '@users/dto/create-user.dto';
 // import { UpdateUserDto } from '@users/dto/update-user.dto';
 import { UsersRepository } from '@users/respository/users.repository';
@@ -20,12 +20,6 @@ export class UsersService {
   }
 
   async findOneUserByUsername(username: string) {
-    const existingUser = await this.userRepository.findOneUserByUsername(username);
-
-    if (existingUser) {
-      throw new ConflictException('Username already exists');
-    }
-
     return await this.userRepository.findOneUserByUsername(username);
   }
 

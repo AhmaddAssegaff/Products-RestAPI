@@ -1,51 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateAccountDto } from '@auth/dto/create-account.dto';
 import { LoginDto } from '@auth/dto/login-auth.dto';
 import { UsersService } from '@users/users.service';
-import { user_role } from '@users/interface/users.interface';
+import { userRole } from '@core/constants/user.constants';
+import { JwtPayload } from '@jwt/jwt.interface';
+import { JwtTokenService } from '@jwt/jwt-token.service';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { JwtPayload } from './interface/auth.interface';
-import { decryptPayload, encryptPayload } from '@core/utils/jwt-encryption.util';
+import { ExceptionConstants } from '@app/core/exceptions/constants';
+import { UnauthorizedException } from '@core/exceptions/unauthorized.exception';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UsersService,
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly jwtTokenService: JwtTokenService,
   ) {}
 
-  async generateTokens(payload: JwtPayload) {
-    const encrypt = this.configService.get('AUTH_JWT_PAYLOAD_ENCRYPT') === 'true';
-
-    const rawPayload = encrypt
-      ? { data: encryptPayload(payload, this.configService.get('AUTH_JWT_ENCRYPTION_KEY'), this.configService.get('AUTH_JWT_ENCRYPTION_IV')) }
-      : payload;
-
-    const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(rawPayload, {
-        secret: this.configService.get('AUTH_JWT_ACCESS_TOKEN_SECRET'),
-        expiresIn: this.configService.get('AUTH_JWT_ACCESS_TOKEN_EXPIRES_IN'),
-      }),
-      this.jwtService.signAsync(rawPayload, {
-        secret: this.configService.get('AUTH_JWT_REFRESH_TOKEN_SECRET'),
-        expiresIn: this.configService.get('AUTH_JWT_REFRESH_TOKEN_EXPIRES_IN'),
-      }),
-    ]);
-
-    return { accessToken, refreshToken };
-  }
-
   async createUser(createAccountDto: CreateAccountDto) {
-    await this.userService.findOneUserByUsername(createAccountDto.username);
-    const hashedPassword = await bcrypt.hash(createAccountDto.password, 10);
+    const { username, password } = createAccountDto;
+
+    const existingUser = await this.userService.findOneUserByUsername(username);
+
+    if (existingUser) {
+      throw new ConflictException('test Username already exists');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await this.userService.createUser({
       username: createAccountDto.username,
       password: hashedPassword,
-      role: user_role.user,
+      role: userRole.user,
     });
 
     const payload: JwtPayload = {
@@ -54,7 +39,7 @@ export class AuthService {
       role: user.role,
     };
 
-    const tokens = await this.generateTokens(payload);
+    const tokens = await this.jwtTokenService.generateTokens(payload);
 
     return {
       user: {
@@ -66,11 +51,71 @@ export class AuthService {
     };
   }
 
-  async UserLogin(LoginDto: LoginDto) {
-    return await 'login';
+  async UserLogin(loginDto: LoginDto) {
+    const { password, username } = loginDto;
+
+    const user = await this.userService.findOneUserByUsername(username);
+
+    if (!user) {
+      throw new UnauthorizedException({
+        code: ExceptionConstants.UnauthorizedCodes.INVALID_CREDENTIALS,
+        message: 'Invalid credentials test',
+      });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordMatch) {
+      throw new UnauthorizedException({
+        code: ExceptionConstants.UnauthorizedCodes.INVALID_CREDENTIALS,
+        message: 'Invalid credentials',
+      });
+    }
+
+    const payload: JwtPayload = {
+      sub: user.id,
+      username: user.username,
+      role: user.role,
+    };
+
+    const tokens = await this.jwtTokenService.generateTokens(payload);
+
+    return {
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+      },
+      tokens,
+    };
   }
 
-  async createAccessToken() {
-    return await 'new Access Token';
+  async refreshAccessToken(refreshToken: string) {
+    const payload = await this.jwtTokenService.verifyRefreshToken(refreshToken);
+    const user = await this.userService.findOneUserByUsername(payload.username);
+
+    if (!user) {
+      throw new UnauthorizedException({
+        code: ExceptionConstants.UnauthorizedCodes.AUTHENTICATION_FAILED,
+        message: 'user not found',
+      });
+    }
+
+    const newPayload: JwtPayload = {
+      sub: user.id,
+      username: user.username,
+      role: user.role,
+    };
+
+    const tokens = await this.jwtTokenService.generateTokens(newPayload);
+
+    return {
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+      },
+      tokens,
+    };
   }
 }
