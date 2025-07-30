@@ -12,18 +12,13 @@ export class customUnauthorizedFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest();
 
-    const traceId = exception.traceId || randomUUID();
-    const path = exception.path || httpAdapter.getRequestUrl(request);
+    const traceId = randomUUID();
+    const path = httpAdapter.getRequestUrl(request);
 
-    const responseBody = {
-      _metadata: {
-        message: exception.message,
-        code: exception.code,
-        timestamp: new Date().toISOString(),
-        traceId,
-        path,
-      },
-    };
+    exception.setTraceId(traceId);
+    exception.setPath(path);
+
+    const responseBody = exception.generateHttpResponseBody();
 
     httpAdapter.reply(ctx.getResponse(), responseBody, HttpStatus.UNAUTHORIZED);
   }

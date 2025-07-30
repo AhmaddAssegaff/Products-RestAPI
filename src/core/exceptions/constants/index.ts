@@ -33,6 +33,8 @@ export class ExceptionConstants {
     USER_NOT_VERIFIED: 20009,
     REQUIRED_RE_AUTHENTICATION: 20010,
     INVALID_RESET_PASSWORD_TOKEN: 20011,
+    USERNAME_NOT_FOUND: 20012,
+    PASSWORD_INCORRECT: 20013,
   };
 
   public static readonly InternalServerErrorCodes = {
@@ -57,3 +59,5 @@ export class ExceptionConstants {
     ROUTE_NOT_FOUND: 40001,
   };
 }
+
+export type UnauthorizedCodeKey = keyof typeof ExceptionConstants.UnauthorizedCodes;

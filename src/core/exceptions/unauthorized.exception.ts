@@ -1,6 +1,6 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { ExceptionConstants } from './constants';
+import { ExceptionConstants, UnauthorizedCodeKey } from './constants';
 import { IException, IHttpUnauthorizedExceptionResponse } from './interface';
 
 export class UnauthorizedException extends HttpException {
@@ -45,7 +45,9 @@ export class UnauthorizedException extends HttpException {
   })
   path: string; // Trace ID of the request
 
-  constructor(exception: IException) {
+  constructor(exception: Omit<IException, 'code'> & { code: UnauthorizedCodeKey }) {
+    const codeNumber = ExceptionConstants.UnauthorizedCodes[exception.code];
+
     super(exception.message, HttpStatus.UNAUTHORIZED, {
       cause: exception.cause,
       description: exception.description,
@@ -54,7 +56,7 @@ export class UnauthorizedException extends HttpException {
     this.message = exception.message;
     this.cause = exception.cause ?? new Error();
     this.description = exception.description;
-    this.code = exception.code ?? HttpStatus.UNAUTHORIZED;
+    this.code = codeNumber ?? HttpStatus.UNAUTHORIZED; // fallback jika gak valid
     this.timestamp = new Date().toISOString();
   }
 

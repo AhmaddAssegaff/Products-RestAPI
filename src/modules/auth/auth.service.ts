@@ -6,7 +6,6 @@ import { userRole } from '@core/constants/user.constants';
 import { JwtPayload } from '@jwt/jwt.interface';
 import { JwtTokenService } from '@jwt/jwt-token.service';
 import * as bcrypt from 'bcrypt';
-import { ExceptionConstants } from '@app/core/exceptions/constants';
 import { UnauthorizedException } from '@core/exceptions/unauthorized.exception';
 
 @Injectable()
@@ -58,8 +57,9 @@ export class AuthService {
 
     if (!user) {
       throw new UnauthorizedException({
-        code: ExceptionConstants.UnauthorizedCodes.INVALID_CREDENTIALS,
-        message: 'Invalid credentials test',
+        code: 'USERNAME_NOT_FOUND',
+        message: 'Invalid credentials',
+        description: 'username tidak di temukan',
       });
     }
 
@@ -67,8 +67,9 @@ export class AuthService {
 
     if (!isPasswordMatch) {
       throw new UnauthorizedException({
-        code: ExceptionConstants.UnauthorizedCodes.INVALID_CREDENTIALS,
+        code: 'PASSWORD_INCORRECT',
         message: 'Invalid credentials',
+        description: 'password salah',
       });
     }
 
@@ -96,7 +97,7 @@ export class AuthService {
 
     if (!user) {
       throw new UnauthorizedException({
-        code: ExceptionConstants.UnauthorizedCodes.AUTHENTICATION_FAILED,
+        code: 'AUTHENTICATION_FAILED',
         message: 'user not found',
       });
     }

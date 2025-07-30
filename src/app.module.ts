@@ -10,7 +10,6 @@ import {
   NotFoundExceptionFilter,
   ValidationExceptionFilter,
   ForbiddenExceptionFilter,
-  UnauthorizedExceptionFilter,
 } from '@app/core/filters';
 import { customUnauthorizedFilter } from '@core/filters/custom-unauthorized.filter';
 
