@@ -1,11 +1,14 @@
-import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
+import { CallHandler, ExecutionContext, HttpException, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable, catchError, tap, throwError } from 'rxjs';
 import { randomUUID } from 'node:crypto';
 import { Request, Response } from 'express';
+import { WinstonLogger } from '../log/WinstonLogger';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  private readonly logger = new Logger('HTTP');
+  constructor(private readonly logger: WinstonLogger) {
+    this.logger.setContext(LoggingInterceptor.name);
+  }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const ctx = context.switchToHttp();
@@ -26,7 +29,12 @@ export class LoggingInterceptor implements NestInterceptor {
       }),
       catchError((err) => {
         const duration = Date.now() - start;
-        const statusCode = err?.status ?? 500;
+        let statusCode = 500;
+
+        if (err instanceof HttpException) {
+          statusCode = err.getStatus();
+        }
+
         const message = err?.response?.message ?? err?.message ?? 'Internal Server Error';
         const stack = err?.stack;
         this.logger.error(`[${method}] ${url} - ${statusCode} - ${duration}ms - traceId: ${traceId} - ${message}`, stack, 'LoggingInterceptor');

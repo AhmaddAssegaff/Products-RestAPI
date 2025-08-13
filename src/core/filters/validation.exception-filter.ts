@@ -9,7 +9,7 @@ import { ExceptionConstants } from '../exceptions/constants';
  */
 @Catch(ValidationError)
 export class ValidationExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(ValidationExceptionFilter.name);
+  private readonly logger = new Logger('ValidationExceptionFilter');
 
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
@@ -23,7 +23,7 @@ export class ValidationExceptionFilter implements ExceptionFilter {
 
     const responseBody = {
       _metadata: {
-        message: "Let's take a look at validation error",
+        message: 'validation errors thrown by class-validator',
         description: this.formatValidationErrors(exception),
         timestamp: new Date().toISOString(),
         code: ExceptionConstants.BadRequestCodes.VALIDATION_ERROR,

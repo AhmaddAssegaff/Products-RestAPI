@@ -10,11 +10,13 @@ import {
   NotFoundExceptionFilter,
   ValidationExceptionFilter,
   ForbiddenExceptionFilter,
+  UnauthorizedExceptionFilter,
 } from '@app/core/filters';
-import { customUnauthorizedFilter } from '@core/filters/custom-unauthorized.filter';
-
 import { RouterModule } from '@modules/route.modules';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { WinstonLogger } from '@core/log/WinstonLogger';
+import { Logger as WinstonBaseLogger, createLogger } from 'winston';
+import { winstonLoggerOptions } from '@config/logger.config';
 
 @Module({
   imports: [
@@ -24,9 +26,15 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
     }),
     RouterModule.forRoot(),
   ],
+  exports: [WinstonLogger],
   controllers: [AppController],
   providers: [
     AppService,
+    WinstonLogger,
+    {
+      provide: WinstonBaseLogger,
+      useFactory: () => createLogger(winstonLoggerOptions),
+    },
     {
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,
@@ -41,7 +49,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
     },
     {
       provide: APP_FILTER,
-      useClass: customUnauthorizedFilter,
+      useClass: UnauthorizedExceptionFilter,
     },
     {
       provide: APP_FILTER,

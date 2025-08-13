@@ -13,10 +13,8 @@ import { RolesGuard } from '@app/core/guard/roles.guard';
   path: 'products',
   version: '1',
 })
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
-  @Roles(userRole.admin)
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);

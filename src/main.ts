@@ -1,19 +1,21 @@
 import { NestFactory } from '@nestjs/core';
-import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import helmet from 'helmet';
 import { AppModule } from '@app/app.module';
-import { WinstonModule } from 'nest-winston';
-import { winstonLoggerOptions } from '@config/logger.config';
 import { createDocument } from '@core/docs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { collectDefaultMetrics, Registry } from 'prom-client';
 import * as cookieParser from 'cookie-parser';
+import { WinstonLogger } from '@core/log/WinstonLogger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
+    logger: ['log', 'error', 'warn', 'debug', 'verbose'],
     bufferLogs: true,
-    logger: WinstonModule.createLogger(winstonLoggerOptions),
   });
+
+  const Logger = app.get(WinstonLogger);
+  app.useLogger(Logger);
 
   const register = new Registry();
   collectDefaultMetrics({ register });
